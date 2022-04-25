@@ -1,8 +1,9 @@
 import * as React from 'react';
-import { FC, MouseEvent, useCallback, useContext, useEffect, useMemo, useRef } from 'react';
+import { FC, MouseEvent, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { observer } from 'mobx-react-lite';
 import styles from './ElementDefinition.scss';
 import { CanvasStoreContext } from './CanvasStore';
+import { action, makeObservable, observable } from 'mobx';
 
 const genId = (() => {
   let id = 0;
@@ -11,13 +12,18 @@ const genId = (() => {
 
 class CirclePropsStore {
   id: number;
-  strokeWidth = 5;
-  radius: number = 50;
-  x: number = 0;
-  y: number = 0;
+  @observable strokeWidth = 5;
+  @observable radius: number = 50;
+  @observable x: number = 0;
+  @observable y: number = 0;
+
+  @action setRadius = (v: number): void => {
+    this.radius = v;
+  };
 
   constructor() {
     this.id = genId();
+    makeObservable(this);
   }
 }
 
@@ -55,7 +61,12 @@ export class CircleElement implements ElementInterface {
   });
 
   renderConfig: FC = observer(() => {
-    const { id } = this.store;
+    const { id, radius, setRadius } = this.store;
+
+    const [inputRadius, setInputRadius] = useState<string>(radius.toFixed(2));
+    const confirmRadius = useCallback(() => {
+      setRadius(+inputRadius);
+    }, [inputRadius]);
 
     return (
       <div>
@@ -63,6 +74,11 @@ export class CircleElement implements ElementInterface {
           <p>当前选中的元素：</p>
           <p>id: {id}</p>
           <p>元素种类: {this.elementName}</p>
+        </div>
+        <div>
+          设置半径：
+          <input value={inputRadius} onChange={(e) => setInputRadius(e.target.value)} style={{ width: '80px' }} />
+          <button onClick={confirmRadius}>确认</button>
         </div>
       </div>
     );
