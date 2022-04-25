@@ -23,6 +23,11 @@ export class CanvasStore {
   @action pushElements = (v: ElementInterface): void => {
     this.elements.push(v);
   };
+
+  @observable selectedElements: ElementInterface[] = [];
+  @action setSelectedElements = (v: ElementInterface[]): void => {
+    this.selectedElements = v;
+  };
 }
 
 export const CanvasStoreContext = React.createContext<CanvasStore>(new CanvasStore());

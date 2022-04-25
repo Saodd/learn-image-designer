@@ -1,2 +1,7 @@
-.ElementDefinition {
+@mixin Element {
+  cursor: pointer;
+}
+
+.CircleElementRender {
+  @include Element;
 }
