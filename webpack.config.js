@@ -19,7 +19,7 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      title: 'Project Template: React',
+      title: '图片编辑器 - Lewin Lan',
       template: './src/index.html',
       favicon: './src/favicon.ico',
       chunks: ['index'],
