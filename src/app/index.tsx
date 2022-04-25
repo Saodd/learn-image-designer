@@ -6,10 +6,8 @@ import { RightController } from './components/RightController';
 
 export function App(): JSX.Element {
   return (
-    <div id={'app'}>
-      <div className={styles.Container}>
-        <Canvas />
-      </div>
+    <div id={'app'} className={styles.App}>
+      <Canvas />
       <LeftController />
       <RightController />
     </div>

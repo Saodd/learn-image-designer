@@ -24,11 +24,19 @@ export class CanvasStore {
     this.elements.push(v);
   };
 
+  selectedTimestamp: number = 0;
   @observable selectedElements: ElementInterface[] = [];
   @action setSelectedElements = (v: ElementInterface[]): void => {
-    this.selectedElements = v;
+    const now = Date.now();
+    if (now - this.selectedTimestamp > 50) {
+      this.selectedElements = v;
+      this.selectedTimestamp = now;
+    }
   };
 
+  /**
+   * 分别是起点xy坐标、终点xy坐标
+   */
   @observable selecting: SelectingBox | null = null;
   @action setSelecting = (v: SelectingBox): void => {
     this.selecting = v;
@@ -42,8 +50,14 @@ export class CanvasStore {
     this.selecting[3] = y;
   };
   performSelect = (): void => {
+    const elems = this.elements.filter((elem) => elem.checkSelect(this.selectingBox));
+    if (elems.length) this.setSelectedElements(elems);
     this.setSelecting(null);
   };
+
+  /**
+   * 选择框的左上角xy坐标、宽和高
+   */
   @computed get selectingBox(): SelectingBox | null {
     if (!this.selecting) return null;
     const [a, b, c, d] = this.selecting;
@@ -55,6 +69,6 @@ export class CanvasStore {
   }
 }
 
-type SelectingBox = [number, number, number, number];
+export type SelectingBox = [number, number, number, number];
 
 export const CanvasStoreContext = React.createContext<CanvasStore>(new CanvasStore());
