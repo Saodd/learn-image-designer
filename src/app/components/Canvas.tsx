@@ -5,7 +5,15 @@ import styles from './Canvas.scss';
 import { CanvasStore, CanvasStoreContext } from './CanvasStore';
 
 export const Canvas: FC = observer(() => {
-  const { canvasHeight, canvasWidth } = useContext(CanvasStoreContext);
+  const { canvasHeight, canvasWidth, elements } = useContext(CanvasStoreContext);
 
-  return <div className={styles.Canvas} style={{ width: canvasWidth, height: canvasHeight }}></div>;
+  return (
+    <div className={styles.Canvas} style={{ width: canvasWidth, height: canvasHeight }}>
+      <svg style={{ width: canvasWidth, height: canvasHeight }}>
+        {elements.map((elem) => (
+          <elem.render />
+        ))}
+      </svg>
+    </div>
+  );
 });
