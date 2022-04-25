@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { action, makeObservable, observable } from 'mobx';
+import { action, computed, makeObservable, observable } from 'mobx';
 import { CircleElement, ElementInterface } from './ElementDefinition';
 
 export class CanvasStore {
@@ -28,6 +28,33 @@ export class CanvasStore {
   @action setSelectedElements = (v: ElementInterface[]): void => {
     this.selectedElements = v;
   };
+
+  @observable selecting: SelectingBox | null = null;
+  @action setSelecting = (v: SelectingBox): void => {
+    this.selecting = v;
+  };
+  @action setSelectingStart = (x: number, y: number): void => {
+    this.selecting = [x, y, x, y];
+  };
+  @action setSelectingEnd = (x: number, y: number): void => {
+    if (!this.selecting) return;
+    this.selecting[2] = x;
+    this.selecting[3] = y;
+  };
+  performSelect = (): void => {
+    this.setSelecting(null);
+  };
+  @computed get selectingBox(): SelectingBox | null {
+    if (!this.selecting) return null;
+    const [a, b, c, d] = this.selecting;
+    const x = a > c ? c : a;
+    const w = a > c ? a - c : c - a;
+    const y = b > d ? d : b;
+    const h = b > d ? b - d : d - b;
+    return [x, y, w, h];
+  }
 }
+
+type SelectingBox = [number, number, number, number];
 
 export const CanvasStoreContext = React.createContext<CanvasStore>(new CanvasStore());
